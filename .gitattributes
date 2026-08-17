@@ -1,0 +1,42 @@
+# Unity YAML files — force text so diffs are readable and merges work
+*.meta merge=unityyamlmerge eol=lf
+*.unity merge=unityyamlmerge eol=lf
+*.prefab merge=unityyamlmerge eol=lf
+*.asset merge=unityyamlmerge eol=lf
+*.mat merge=unityyamlmerge eol=lf
+*.anim merge=unityyamlmerge eol=lf
+*.controller merge=unityyamlmerge eol=lf
+*.overrideController merge=unityyamlmerge eol=lf
+*.physicsMaterial2D merge=unityyamlmerge eol=lf
+*.playable merge=unityyamlmerge eol=lf
+*.renderTexture merge=unityyamlmerge eol=lf
+*.mixer merge=unityyamlmerge eol=lf
+*.shadervariants merge=unityyamlmerge eol=lf
+*.spriteatlas merge=unityyamlmerge eol=lf
+
+# Binary files — never try to diff or merge these
+*.fbx binary
+*.FBX binary
+*.obj binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.psd binary
+*.tga binary
+*.tif binary
+*.tiff binary
+*.bmp binary
+*.exr binary
+*.hdr binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.mp4 binary
+*.mov binary
+*.ttf binary
+*.otf binary
+*.dll binary
+*.so binary
+*.a binary
+*.lib binary
