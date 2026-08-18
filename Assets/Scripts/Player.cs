@@ -27,4 +27,9 @@ public class Player : MonoBehaviour
 
         _inputVector = new();
     }
+
+    public bool IsWalking()
+    {
+        return _moveDirection != Vector3.zero;
+    }
 }
