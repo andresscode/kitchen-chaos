@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -6,11 +7,36 @@ public class Player : MonoBehaviour
     [SerializeField] private GameInput gameInput;
     [SerializeField] private float playerRadius = 0.7f;
     [SerializeField] private float playerHeight = 2f;
+    [SerializeField] private float interactDistance = 2f;
+    [SerializeField] private LayerMask countersLayerMask;
     private readonly float rotationSpeed = 10f;
     private Vector2 _inputVector = new();
     private Vector3 _moveDirection = new();
+    private Vector3 _lastInteractDirection = new();
+    private ClearCounter _selectedCounter;
+
+    private void Awake()
+    {
+        _lastInteractDirection = transform.forward;
+    }
+
+    private void OnEnable()
+    {
+        gameInput.OnInteractAction += GameInput_OnInteractAction;
+    }
+
+    private void OnDisable()
+    {
+        gameInput.OnInteractAction -= GameInput_OnInteractAction;
+    }
 
     private void Update()
+    {
+        HandleMovement();
+        HandleInteractions();
+    }
+
+    private void HandleMovement()
     {
         _inputVector = gameInput.GetInputVectorNormalized();
 
@@ -53,6 +79,38 @@ public class Player : MonoBehaviour
         }
 
         _inputVector = new();
+    }
+
+    private void HandleInteractions()
+    {
+        if (_moveDirection != Vector3.zero)
+        {
+            // Keep the last facing direction so we can still interact while standing still.
+            _lastInteractDirection = _moveDirection;
+        }
+
+        if (Physics.Raycast(
+                transform.position + playerRadius * Vector3.up,
+                _lastInteractDirection,
+                out RaycastHit hit,
+                interactDistance,
+                countersLayerMask)
+            && hit.transform.TryGetComponent(out ClearCounter clearCounter))
+        {
+            _selectedCounter = clearCounter;
+        }
+        else
+        {
+            _selectedCounter = null;
+        }
+    }
+
+    private void GameInput_OnInteractAction(object sender, EventArgs e)
+    {
+        if (_selectedCounter != null)
+        {
+            _selectedCounter.Interact();
+        }
     }
 
     private bool CanMove(Vector3 moveDirection, float moveDistance)

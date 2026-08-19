@@ -1,16 +1,35 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class GameInput : MonoBehaviour
 {
-    [SerializeField] private InputAction playerAction;
+    public event EventHandler OnInteractAction;
 
-    private void Start()
+    [SerializeField] private InputAction playerAction;
+    [SerializeField] private InputAction interactAction;
+
+    private void OnEnable()
     {
         playerAction.Enable();
+
+        interactAction.performed += InteractAction_performed;
+        interactAction.Enable();
     }
 
-    // Update is called once per frame
+    private void OnDisable()
+    {
+        playerAction.Disable();
+
+        interactAction.performed -= InteractAction_performed;
+        interactAction.Disable();
+    }
+
+    private void InteractAction_performed(InputAction.CallbackContext context)
+    {
+        OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
+
     public Vector2 GetInputVectorNormalized()
     {
         return playerAction.ReadValue<Vector2>();
