@@ -127,9 +127,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 129113886078247507, guid: 3b334047f20ac4946a212774b5775c10, type: 3}
+      propertyPath: kitchenObjectSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 4fafee776acf48df8c205652f700099c, type: 2}
     - target: {fileID: 4542865947470900917, guid: 3b334047f20ac4946a212774b5775c10, type: 3}
       propertyPath: m_Name
-      value: ClearCounter (1)
+      value: CheeseCounter
       objectReference: {fileID: 0}
     - target: {fileID: 8003441968792110660, guid: 3b334047f20ac4946a212774b5775c10, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1014,9 +1018,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 129113886078247507, guid: 3b334047f20ac4946a212774b5775c10, type: 3}
+      propertyPath: kitchenObjectSO
+      value: 
+      objectReference: {fileID: 11400000, guid: c4674179b34d42ac93d26a7bc680f7b4, type: 2}
     - target: {fileID: 4542865947470900917, guid: 3b334047f20ac4946a212774b5775c10, type: 3}
       propertyPath: m_Name
-      value: ClearCounter
+      value: TomatoCounter
       objectReference: {fileID: 0}
     - target: {fileID: 8003441968792110660, guid: 3b334047f20ac4946a212774b5775c10, type: 3}
       propertyPath: m_LocalPosition.x
