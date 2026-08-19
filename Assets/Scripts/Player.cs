@@ -3,6 +3,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public static Player Instance { get; private set; }
+
+    public class OnSelectedCounterChangedEventArgs : EventArgs
+    {
+        public ClearCounter SelectedCounter;
+    }
+
+    public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private GameInput gameInput;
     [SerializeField] private float playerRadius = 0.7f;
@@ -17,7 +26,23 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogError("There is more than one Player instance.");
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
         _lastInteractDirection = transform.forward;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     private void OnEnable()
@@ -97,12 +122,27 @@ public class Player : MonoBehaviour
                 countersLayerMask)
             && hit.transform.TryGetComponent(out ClearCounter clearCounter))
         {
-            _selectedCounter = clearCounter;
+            SetSelectedCounter(clearCounter);
         }
         else
         {
-            _selectedCounter = null;
+            SetSelectedCounter(null);
         }
+    }
+
+    private void SetSelectedCounter(ClearCounter selectedCounter)
+    {
+        if (_selectedCounter == selectedCounter)
+        {
+            return;
+        }
+
+        _selectedCounter = selectedCounter;
+
+        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs
+        {
+            SelectedCounter = _selectedCounter
+        });
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
