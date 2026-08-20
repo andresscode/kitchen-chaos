@@ -1,25 +1,19 @@
 using UnityEngine;
 
-public class ClearCounter : MonoBehaviour, IKitchenObjectParent
+/// <summary>
+/// A plain surface: the player can drop a KitchenObject here or pick one back up.
+/// It never spawns anything on its own.
+/// </summary>
+public class ClearCounter : BaseCounter
 {
-    [SerializeField] private KitchenObjectSO kitchenObjectSO;
-    [SerializeField] private Transform counterTopPoint;
-
-    private KitchenObject _kitchenObject;
-
-    public void Interact(Player player)
+    public override void Interact(Player player)
     {
-        if (_kitchenObject == null)
+        if (!HasKitchenObject())
         {
             if (player.HasKitchenObject())
             {
                 // Player drops what they carry onto this counter.
                 player.GetKitchenObject().SetKitchenObjectParent(this);
-            }
-            else
-            {
-                Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
-                kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(this);
             }
 
             return;
@@ -27,36 +21,11 @@ public class ClearCounter : MonoBehaviour, IKitchenObjectParent
 
         if (player.HasKitchenObject())
         {
-            Debug.Log($"{name} already holds {_kitchenObject.GetKitchenObjectSO().objectName}");
+            Debug.Log($"{name} already holds {GetKitchenObject().GetKitchenObjectSO().objectName}");
             return;
         }
 
         // Player picks up what sits on this counter.
-        _kitchenObject.SetKitchenObjectParent(player);
-    }
-
-    public Transform GetKitchenObjectFollowTransform()
-    {
-        return counterTopPoint;
-    }
-
-    public void SetKitchenObject(KitchenObject kitchenObject)
-    {
-        _kitchenObject = kitchenObject;
-    }
-
-    public KitchenObject GetKitchenObject()
-    {
-        return _kitchenObject;
-    }
-
-    public void ClearKitchenObject()
-    {
-        _kitchenObject = null;
-    }
-
-    public bool HasKitchenObject()
-    {
-        return _kitchenObject != null;
+        GetKitchenObject().SetKitchenObjectParent(player);
     }
 }

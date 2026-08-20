@@ -1,9 +1,15 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SelectedCounterVisual : MonoBehaviour
 {
-    [SerializeField] private ClearCounter clearCounter;
-    [SerializeField] private GameObject selectedVisualGameObject;
+    [FormerlySerializedAs("clearCounter")]
+    [SerializeField] private BaseCounter baseCounter;
+
+    // Some counters (the container counter, for one) are built from several meshes, so the
+    // highlight has to be toggled on every one of them at once.
+    [FormerlySerializedAs("selectedVisualGameObject")]
+    [SerializeField] private GameObject[] selectedVisualGameObjects;
 
     private void Start()
     {
@@ -21,6 +27,14 @@ public class SelectedCounterVisual : MonoBehaviour
 
     private void Player_OnSelectedCounterChanged(object sender, Player.OnSelectedCounterChangedEventArgs e)
     {
-        selectedVisualGameObject.SetActive(e.SelectedCounter == clearCounter);
+        SetSelectedVisualsActive(e.SelectedCounter == baseCounter);
+    }
+
+    private void SetSelectedVisualsActive(bool isActive)
+    {
+        foreach (GameObject selectedVisualGameObject in selectedVisualGameObjects)
+        {
+            selectedVisualGameObject.SetActive(isActive);
+        }
     }
 }
