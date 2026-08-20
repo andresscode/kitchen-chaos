@@ -30,7 +30,7 @@ public class GameInput : MonoBehaviour
         OnInteractAction?.Invoke(this, EventArgs.Empty);
     }
 
-    public Vector2 GetInputVectorNormalized()
+    public Vector2 GetInputVector()
     {
         return playerAction.ReadValue<Vector2>();
     }

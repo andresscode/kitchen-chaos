@@ -19,6 +19,8 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     [SerializeField] private float interactDistance = 2f;
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
+    private const float InputDeadzone = 0.1f;
+    private const float SlideDeadzone = 0.3f;
     private readonly float rotationSpeed = 10f;
     private Vector2 _inputVector = new();
     private Vector3 _moveDirection = new();
@@ -65,17 +67,32 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void HandleMovement()
     {
-        _inputVector = gameInput.GetInputVectorNormalized();
+        _inputVector = gameInput.GetInputVector();
 
-        _moveDirection = new(_inputVector.x, 0f, _inputVector.y);
+        // The keyboard composite always reports a unit vector, but a gamepad stick reports
+        // any magnitude between 0 and 1. Keep that magnitude as a speed multiplier and work
+        // with a unit direction, so the slide-along-a-counter logic below can swap the
+        // direction without also changing how fast we travel.
+        float inputMagnitude = Mathf.Clamp01(_inputVector.magnitude);
 
-        float moveDistance = moveSpeed * Time.deltaTime;
+        if (inputMagnitude < InputDeadzone)
+        {
+            _moveDirection = Vector3.zero;
+            return;
+        }
+
+        _moveDirection = new Vector3(_inputVector.x, 0f, _inputVector.y).normalized;
+
+        float moveDistance = moveSpeed * inputMagnitude * Time.deltaTime;
         bool canMove = CanMove(_moveDirection, moveDistance);
 
         if (!canMove)
         {
-            // Blocked head on, try sliding along the X axis only.
-            Vector3 moveDirectionX = new Vector3(_moveDirection.x, 0f, 0f).normalized;
+            // Blocked head on, try sliding along the X axis only. Ignore a barely tilted axis
+            // so a near-vertical stick push does not snap into a full speed sideways slide.
+            Vector3 moveDirectionX = Mathf.Abs(_moveDirection.x) > SlideDeadzone
+                ? new Vector3(Mathf.Sign(_moveDirection.x), 0f, 0f)
+                : Vector3.zero;
             canMove = moveDirectionX != Vector3.zero && CanMove(moveDirectionX, moveDistance);
 
             if (canMove)
@@ -85,7 +102,9 @@ public class Player : MonoBehaviour, IKitchenObjectParent
             else
             {
                 // Still blocked, try sliding along the Z axis only.
-                Vector3 moveDirectionZ = new Vector3(0f, 0f, _moveDirection.z).normalized;
+                Vector3 moveDirectionZ = Mathf.Abs(_moveDirection.z) > SlideDeadzone
+                    ? new Vector3(0f, 0f, Mathf.Sign(_moveDirection.z))
+                    : Vector3.zero;
                 canMove = moveDirectionZ != Vector3.zero && CanMove(moveDirectionZ, moveDistance);
 
                 if (canMove)
@@ -100,12 +119,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
             transform.position += moveDistance * _moveDirection;
         }
 
-        if (_moveDirection != Vector3.zero)
-        {
-            transform.forward = Vector3.Slerp(transform.forward, _moveDirection, Time.deltaTime * rotationSpeed);
-        }
-
-        _inputVector = new();
+        transform.forward = Vector3.Slerp(transform.forward, _moveDirection, Time.deltaTime * rotationSpeed);
     }
 
     private void HandleInteractions()
