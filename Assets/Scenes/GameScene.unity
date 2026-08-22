@@ -607,46 +607,6 @@ MonoBehaviour:
       m_Groups: 
       m_Action: Player
       m_Flags: 8
-    - m_Name: Arrows
-      m_Id: d60d6286-8b08-4694-915d-6d0ef08ca891
-      m_Path: 2DVector
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player
-      m_Flags: 4
-    - m_Name: up
-      m_Id: c5f4d6cb-9a05-4d02-b99a-c87c66b1ffa8
-      m_Path: <Keyboard>/upArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player
-      m_Flags: 8
-    - m_Name: down
-      m_Id: b835557d-9bc8-4d3e-b22e-9e39ab51ccee
-      m_Path: <Keyboard>/downArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player
-      m_Flags: 8
-    - m_Name: left
-      m_Id: 9089163a-80d3-47ea-860f-a178a8b1294d
-      m_Path: <Keyboard>/leftArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player
-      m_Flags: 8
-    - m_Name: right
-      m_Id: 70d363c3-0ff7-4070-98b7-e46b46480fcd
-      m_Path: <Keyboard>/rightArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Player
-      m_Flags: 8
     - m_Name: 
       m_Id: e3d5acfd-e5a5-4093-89fa-f8abc3169760
       m_Path: <DualShockGamepad>/leftStick
@@ -680,6 +640,32 @@ MonoBehaviour:
       m_Processors: 
       m_Groups: 
       m_Action: Interact
+      m_Flags: 0
+    m_Flags: 0
+    m_Priority: 0
+  interactAlternateAction:
+    m_Name: Interact Alternate
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 1f6af8f6-71ba-4ce4-ad68-4d03f57a0866
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 7d9279c7-fa9e-489d-a383-f449dbaf88e9
+      m_Path: <Keyboard>/f
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Interact Alternate
+      m_Flags: 0
+    - m_Name: 
+      m_Id: c37cc8d6-7d91-4b0e-ac6a-a465f39ff393
+      m_Path: <DualShockGamepad>/buttonWest
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Interact Alternate
       m_Flags: 0
     m_Flags: 0
     m_Priority: 0
@@ -1617,6 +1603,67 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b33b7e37041c24bac91b921dc3953c70, type: 3}
+--- !u!1001 &2019827957
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 450956263245596842, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: cutKitchenObjectSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 821e56ed153524a4eaf7fe679207ee8b, type: 2}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217201855489708183, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4683231450082785382, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
+      propertyPath: m_Name
+      value: CuttingCounter
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0c11fba6271264106966f6cad862d61b, type: 3}
 --- !u!1001 &2071839737
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1697,3 +1744,4 @@ SceneRoots:
   - {fileID: 23506684}
   - {fileID: 292935263}
   - {fileID: 1325786783}
+  - {fileID: 2019827957}

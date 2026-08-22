@@ -6,6 +6,14 @@ public class KitchenObject : MonoBehaviour
 
     private IKitchenObjectParent _kitchenObjectParent;
 
+    public static KitchenObject SpawnKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent parent)
+    {
+        Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
+        KitchenObject kitchenObject = kitchenObjectTransform.GetComponent<KitchenObject>();
+        kitchenObject.SetKitchenObjectParent(parent);
+        return kitchenObject;
+    }
+
     public KitchenObjectSO GetKitchenObjectSO()
     {
         return kitchenObjectSO;
@@ -13,15 +21,15 @@ public class KitchenObject : MonoBehaviour
 
     public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent)
     {
-        _kitchenObjectParent?.ClearKitchenObject();
-
-        _kitchenObjectParent = kitchenObjectParent;
-
         if (kitchenObjectParent.HasKitchenObject())
         {
             Debug.LogError("The parent already has a KitchenObject");
             return;
         }
+
+        _kitchenObjectParent?.ClearKitchenObject();
+
+        _kitchenObjectParent = kitchenObjectParent;
 
         kitchenObjectParent.SetKitchenObject(this);
 
@@ -32,5 +40,11 @@ public class KitchenObject : MonoBehaviour
     public IKitchenObjectParent GetKitchenObjectParent()
     {
         return _kitchenObjectParent;
+    }
+
+    public void DestroySelf()
+    {
+        _kitchenObjectParent.ClearKitchenObject();
+        Destroy(gameObject);
     }
 }

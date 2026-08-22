@@ -15,6 +15,11 @@ public abstract class BaseCounter : MonoBehaviour, IKitchenObjectParent
         Debug.LogError($"{name} does not implement Interact.");
     }
 
+    public virtual void InteractAlternate(Player player)
+    {
+        Debug.LogError($"{name} does not implement InteractAlternate.");
+    }
+
     public Transform GetKitchenObjectFollowTransform()
     {
         return counterTopPoint;
