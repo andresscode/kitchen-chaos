@@ -1,9 +1,17 @@
+using System;
 using UnityEngine;
 
 public class CuttingCounter : BaseCounter
 {
     [SerializeField] private CuttingRecipeSO[] _cuttingRecipeSOArray;
     private int _cuttingProgress = 0;
+
+    public event EventHandler OnCut;
+    public event EventHandler<OnProgressChangedEventArgs> OnProgressChanged;
+    public class OnProgressChangedEventArgs : EventArgs
+    {
+        public float progressNormalized;
+    }
 
     public override void Interact(Player player)
     {
@@ -14,6 +22,7 @@ public class CuttingCounter : BaseCounter
                 // Player drops what they carry onto this counter.
                 player.GetKitchenObject().SetKitchenObjectParent(this);
                 _cuttingProgress = 0;
+                NotifyCuttingProgressChange(0.0f);
             }
 
             return;
@@ -47,7 +56,17 @@ public class CuttingCounter : BaseCounter
             return;
         }
 
+        if (recipe.cuttingProgressMax < 1)
+        {
+            Debug.LogError($"{recipe.input.objectName} cuttingProgressMax is less than 1");
+            return;
+        }
+
         _cuttingProgress++;
+
+        OnCut?.Invoke(this, EventArgs.Empty);
+
+        NotifyCuttingProgressChange((float)_cuttingProgress / recipe.cuttingProgressMax);
 
         if (_cuttingProgress < recipe.cuttingProgressMax)
         {
@@ -57,6 +76,7 @@ public class CuttingCounter : BaseCounter
         GetKitchenObject().DestroySelf();
         KitchenObject.SpawnKitchenObject(recipe.output, this);
         _cuttingProgress = 0;
+        NotifyCuttingProgressChange(0.0f);
     }
 
     private bool TryGetCuttingRecipe(KitchenObjectSO input, out CuttingRecipeSO recipe)
@@ -78,5 +98,13 @@ public class CuttingCounter : BaseCounter
     {
         // A cut that is underway must be finished before the object can leave the counter.
         return _cuttingProgress == 0;
+    }
+
+    private void NotifyCuttingProgressChange(float newValue)
+    {
+        OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs
+        {
+            progressNormalized = newValue
+        });
     }
 }
