@@ -3,6 +3,7 @@ using UnityEngine;
 public class CuttingCounter : BaseCounter
 {
     [SerializeField] private CuttingRecipeSO[] _cuttingRecipeSOArray;
+    private int _cuttingProgress = 0;
 
     public override void Interact(Player player)
     {
@@ -12,6 +13,7 @@ public class CuttingCounter : BaseCounter
             {
                 // Player drops what they carry onto this counter.
                 player.GetKitchenObject().SetKitchenObjectParent(this);
+                _cuttingProgress = 0;
             }
 
             return;
@@ -23,37 +25,58 @@ public class CuttingCounter : BaseCounter
             return;
         }
 
-        // Player picks up what sits on this counter.
-        GetKitchenObject().SetKitchenObjectParent(player);
+        if (CanPlayerPickUpKitchenObject())
+        {
+            // Player picks up what sits on this counter.
+            GetKitchenObject().SetKitchenObjectParent(player);
+        }
     }
 
     public override void InteractAlternate(Player player)
     {
-        if (HasKitchenObject() && !player.HasKitchenObject())
+        if (!HasKitchenObject() || player.HasKitchenObject())
         {
-            KitchenObjectSO outputKitchenObjectSO = GetOutputForInput(GetKitchenObject().GetKitchenObjectSO());
-
-            if (outputKitchenObjectSO == null)
-            {
-                Debug.Log($"Invalid cutting recipe for input {GetKitchenObject().GetKitchenObjectSO().objectName}");
-                return;
-            }
-
-            GetKitchenObject().DestroySelf();
-            KitchenObject.SpawnKitchenObject(outputKitchenObjectSO, this);
+            return;
         }
+
+        KitchenObjectSO input = GetKitchenObject().GetKitchenObjectSO();
+
+        if (!TryGetCuttingRecipe(input, out CuttingRecipeSO recipe))
+        {
+            Debug.Log($"{input.objectName} cannot be cut");
+            return;
+        }
+
+        _cuttingProgress++;
+
+        if (_cuttingProgress < recipe.cuttingProgressMax)
+        {
+            return;
+        }
+
+        GetKitchenObject().DestroySelf();
+        KitchenObject.SpawnKitchenObject(recipe.output, this);
+        _cuttingProgress = 0;
     }
 
-    private KitchenObjectSO GetOutputForInput(KitchenObjectSO inputKitchenObjectSO)
+    private bool TryGetCuttingRecipe(KitchenObjectSO input, out CuttingRecipeSO recipe)
     {
-        foreach (CuttingRecipeSO cuttingRecipeSO in _cuttingRecipeSOArray)
+        foreach (CuttingRecipeSO candidate in _cuttingRecipeSOArray)
         {
-            if (cuttingRecipeSO.input == inputKitchenObjectSO)
+            if (candidate != null && candidate.input == input)
             {
-                return cuttingRecipeSO.output;
+                recipe = candidate;
+                return true;
             }
         }
 
-        return null;
+        recipe = null;
+        return false;
+    }
+
+    private bool CanPlayerPickUpKitchenObject()
+    {
+        // A cut that is underway must be finished before the object can leave the counter.
+        return _cuttingProgress == 0;
     }
 }
