@@ -5,6 +5,9 @@ using UnityEngine;
 /// Fries whatever is placed on it, one recipe stage at a time: a raw patty becomes
 /// cooked, a cooked patty left alone becomes burned. Each stage is a separate
 /// FryingRecipeSO, chained by feeding the previous stage's output back in as input.
+///
+/// Progress is kept on the object itself (see FryableProgress), so a part-cooked
+/// patty can be carried away and finished later, on this stove or another one.
 /// </summary>
 public class StoveCounter : BaseCounter, IHasProgress
 {
@@ -53,9 +56,8 @@ public class StoveCounter : BaseCounter, IHasProgress
         GetKitchenObject().DestroySelf();
         KitchenObject.SpawnKitchenObject(output, this);
 
-        // Frying -> Fried -> Burned. Anything past Fried has nowhere left to go.
-        SetState(_state == State.Frying ? State.Fried : State.Burned);
-        StartCooking(output);
+        // The freshly spawned object carries no progress, so the next stage starts at 0.
+        StartCooking();
     }
 
     public override void Interact(Player player)
@@ -77,8 +79,7 @@ public class StoveCounter : BaseCounter, IHasProgress
 
             // Player drops what they carry onto this counter.
             player.GetKitchenObject().SetKitchenObjectParent(this);
-            SetState(State.Frying);
-            StartCooking(input);
+            StartCooking();
 
             return;
         }
@@ -90,17 +91,27 @@ public class StoveCounter : BaseCounter, IHasProgress
         }
 
         // Player picks up what sits on this counter, cooked, raw or burned.
+        SaveProgressToKitchenObject();
         GetKitchenObject().SetKitchenObjectParent(player);
         StopCooking();
     }
 
-    /// <summary>
-    /// Arms the timer for the next stage of <paramref name="input"/>, or stops
-    /// cooking when that object has no further recipe.
-    /// </summary>
-    private void StartCooking(KitchenObjectSO input)
+    public State GetState()
     {
+        return _state;
+    }
+
+    /// <summary>
+    /// Arms the timer for the object currently on the counter, resuming from whatever
+    /// progress that object was carrying, or stops cooking when it has no further recipe.
+    /// </summary>
+    private void StartCooking()
+    {
+        KitchenObject kitchenObject = GetKitchenObject();
+        KitchenObjectSO input = kitchenObject.GetKitchenObjectSO();
+
         _fryingTimer = 0f;
+        SetState(ResolveState(input));
 
         if (!TryGetFryingRecipe(input, out _fryingRecipe))
         {
@@ -116,7 +127,12 @@ public class StoveCounter : BaseCounter, IHasProgress
             return;
         }
 
-        NotifyProgressChange(0f);
+        if (kitchenObject.TryGetComponent(out FryableProgress fryable))
+        {
+            _fryingTimer = fryable.ProgressNormalized * _fryingRecipe.fryingTimerMax;
+        }
+
+        NotifyProgressChange(_fryingTimer / _fryingRecipe.fryingTimerMax);
     }
 
     private void StopCooking()
@@ -125,6 +141,40 @@ public class StoveCounter : BaseCounter, IHasProgress
         _fryingTimer = 0f;
         SetState(State.Idle);
         NotifyProgressChange(0f);
+    }
+
+    /// <summary>
+    /// Hands the in-flight timer back to the object so it can be resumed elsewhere.
+    /// </summary>
+    private void SaveProgressToKitchenObject()
+    {
+        if (_fryingRecipe == null)
+        {
+            return;
+        }
+
+        if (GetKitchenObject().TryGetComponent(out FryableProgress fryable))
+        {
+            fryable.ProgressNormalized = _fryingTimer / _fryingRecipe.fryingTimerMax;
+        }
+    }
+
+    /// <summary>
+    /// Works out which stage of the chain an object sits at, purely from the recipe data,
+    /// so a part-cooked object placed on a cold stove lands in the right state.
+    /// </summary>
+    private State ResolveState(KitchenObjectSO input)
+    {
+        if (TryGetFryingRecipe(input, out FryingRecipeSO recipe))
+        {
+            // Something comes after this stage's output, so this is still the frying
+            // stage; otherwise this is the last stage and the object is about to burn.
+            return TryGetFryingRecipe(recipe.output, out FryingRecipeSO _) ? State.Frying : State.Fried;
+        }
+
+        // No recipe takes this object as input: it is either the burned end of a chain
+        // or something that was never fryable to begin with.
+        return IsFryingOutput(input) ? State.Burned : State.Idle;
     }
 
     private bool TryGetFryingRecipe(KitchenObjectSO input, out FryingRecipeSO recipe)
@@ -142,9 +192,17 @@ public class StoveCounter : BaseCounter, IHasProgress
         return false;
     }
 
-    public State GetState()
+    private bool IsFryingOutput(KitchenObjectSO kitchenObjectSO)
     {
-        return _state;
+        foreach (FryingRecipeSO candidate in fryingRecipeSOArray)
+        {
+            if (candidate != null && candidate.output == kitchenObjectSO)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void SetState(State newState)
