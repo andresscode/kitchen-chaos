@@ -1,17 +1,13 @@
 using System;
 using UnityEngine;
 
-public class CuttingCounter : BaseCounter
+public class CuttingCounter : BaseCounter, IHasProgress
 {
     [SerializeField] private CuttingRecipeSO[] _cuttingRecipeSOArray;
     private int _cuttingProgress = 0;
 
     public event EventHandler OnCut;
-    public event EventHandler<OnProgressChangedEventArgs> OnProgressChanged;
-    public class OnProgressChangedEventArgs : EventArgs
-    {
-        public float progressNormalized;
-    }
+    public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
 
     public override void Interact(Player player)
     {
@@ -102,7 +98,7 @@ public class CuttingCounter : BaseCounter
 
     private void NotifyCuttingProgressChange(float newValue)
     {
-        OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs
+        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
         {
             progressNormalized = newValue
         });
