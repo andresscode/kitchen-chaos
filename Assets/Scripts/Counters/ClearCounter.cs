@@ -21,7 +21,11 @@ public class ClearCounter : BaseCounter
 
         if (player.HasKitchenObject())
         {
-            Debug.Log($"{name} already holds {GetKitchenObject().GetKitchenObjectSO().objectName}");
+            if (!TryPlateIngredient(player))
+            {
+                Debug.Log($"{name} already holds {GetKitchenObject().GetKitchenObjectSO().objectName}");
+            }
+
             return;
         }
 

@@ -42,10 +42,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 6721019809601995505}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0dfa1458b33c40588ab4e11f09d4093c, type: 3}
+  m_Script: {fileID: 11500000, guid: 15699eda3ee54829a7e6534b3473a9b2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KitchenObject
+  m_EditorClassIdentifier: Assembly-CSharp::PlateKitchenObject
   kitchenObjectSO: {fileID: 11400000, guid: 163e14df9aefd4128be96d3d5aa56725, type: 2}
+  validKitchenObjectSOList:
+  - {fileID: 11400000, guid: 17e45b245b7db4ba7a2b12a6c8efc094, type: 2}
+  - {fileID: 11400000, guid: e0f850f6161874c8a8a4d4600b279159, type: 2}
+  - {fileID: 11400000, guid: 2bac261a6bc2a44a3a28b44096fde206, type: 2}
+  - {fileID: 11400000, guid: 821e56ed153524a4eaf7fe679207ee8b, type: 2}
+  - {fileID: 11400000, guid: 0b40d6c6e318443579e7a15a23883a92, type: 2}
 --- !u!1001 &7980915691590196306
 PrefabInstance:
   m_ObjectHideFlags: 0

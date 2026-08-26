@@ -86,7 +86,16 @@ public class StoveCounter : BaseCounter, IHasProgress
 
         if (player.HasKitchenObject())
         {
-            Debug.Log($"{name} already holds {GetKitchenObject().GetKitchenObjectSO().objectName}");
+            if (TryPlateIngredient(player))
+            {
+                // The fried object moved onto the player's plate, the pan is empty again.
+                StopCooking();
+            }
+            else
+            {
+                Debug.Log($"{name} already holds {GetKitchenObject().GetKitchenObjectSO().objectName}");
+            }
+
             return;
         }
 

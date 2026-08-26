@@ -26,7 +26,11 @@ public class CuttingCounter : BaseCounter, IHasProgress
 
         if (player.HasKitchenObject())
         {
-            Debug.Log($"{name} already holds {GetKitchenObject().GetKitchenObjectSO().objectName}");
+            if (!CanPlayerPickUpKitchenObject() || !TryPlateIngredient(player))
+            {
+                Debug.Log($"{name} already holds {GetKitchenObject().GetKitchenObjectSO().objectName}");
+            }
+
             return;
         }
 
