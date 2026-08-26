@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c3e39afe676f40e1b9c2c2c1dc404d7, type: 3}
   m_Name: MeatPattyCooked-MeatPattyBurned
   m_EditorClassIdentifier: Assembly-CSharp::FryingRecipeSO
-  input: {fileID: 0}
-  output: {fileID: 0}
-  fryingTimerMax: 0
+  input: {fileID: 11400000, guid: 0b40d6c6e318443579e7a15a23883a92, type: 2}
+  output: {fileID: 11400000, guid: 1f11d498414bb446589314d19c6bccea, type: 2}
+  fryingTimerMax: 5
