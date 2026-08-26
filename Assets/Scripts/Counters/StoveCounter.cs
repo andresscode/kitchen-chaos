@@ -142,6 +142,11 @@ public class StoveCounter : BaseCounter, IHasProgress
         return false;
     }
 
+    public State GetState()
+    {
+        return _state;
+    }
+
     private void SetState(State newState)
     {
         _state = newState;
