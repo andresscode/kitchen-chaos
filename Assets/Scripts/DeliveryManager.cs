@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,12 @@ public class DeliveryManager : MonoBehaviour
 {
     /// <summary>The single manager living in the scene.</summary>
     public static DeliveryManager Instance { get; private set; }
+
+    /// <summary>Raised when a new recipe is queued on the order board.</summary>
+    public event EventHandler OnRecipeSpawned;
+
+    /// <summary>Raised when a waiting recipe is delivered and leaves the order board.</summary>
+    public event EventHandler OnRecipeCompleted;
 
     [SerializeField] private RecipeListSO recipeListSO;
     [SerializeField] private float spawnRecipeTimerMax = 4f;
@@ -40,10 +47,10 @@ public class DeliveryManager : MonoBehaviour
 
         _spawnRecipeTimer = spawnRecipeTimerMax;
 
-        RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[Random.Range(0, recipeListSO.recipeSOList.Count)];
+        RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
         _waitingRecipeSOList.Add(waitingRecipeSO);
 
-        Debug.Log($"New waiting recipe: {waitingRecipeSO.recipeName}");
+        OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -63,11 +70,15 @@ public class DeliveryManager : MonoBehaviour
 
             _waitingRecipeSOList.RemoveAt(i);
 
-            Debug.Log($"Delivered the correct recipe: {waitingRecipeSO.recipeName}");
+            OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
             return;
         }
+    }
 
-        Debug.Log("Delivered a plate nobody ordered");
+    /// <summary>The recipes currently waiting to be delivered, in the order they were queued.</summary>
+    public List<RecipeSO> GetWaitingRecipeSOList()
+    {
+        return _waitingRecipeSOList;
     }
 
     /// <summary>
